@@ -1,4 +1,20 @@
 const express = require('express');
+const app = express();
+const multer = require('multer');
+const db = require('./Models');
+
+const bodyParser = require('body-parser');
+app.use( bodyParser.json() );       // to support JSON-encoded bodies
+app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
+  extended: true
+}));
+db.sequelize.sync({force:false});
+const port = process.env.PORT || 5000;
+app.set('view engine','ejs');
+app.get('/',(req, res)=>{
+    res.render('base',{title:"My Node App"});
+});
+
 //middleware
 const authenticate = require('./middleware/AuthMiddleware');
 //user
@@ -22,20 +38,6 @@ const CategoryValidation = require('./Validation/CategoryValidation');
 const ProductController = require('./Controller/ProductController');
 const ProductValidation = require('./Validation/ProductValidation');
 
-const app = express();
-const bodyParser = require('body-parser');
-app.use( bodyParser.json() );       // to support JSON-encoded bodies
-app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
-  extended: true
-}));
-const db = require('./Models');
-db.sequelize.sync({force:false});
-
-const port = process.env.PORT || 5000;
-app.set('view engine','ejs');
-app.get('/',(req, res)=>{
-    res.render('base',{title:"My Node App"});
-});
 
 //user routes
 app.get('/user',authenticate.auth,UserController.index);
@@ -59,10 +61,35 @@ app.put('/category/:id',authenticate.auth,CategoryValidation.update,CategoryCont
 app.delete('/category/:id',authenticate.auth,CategoryController.delete);
 
 //Product route
+var storage = multer.diskStorage(
+  {
+      filename: function ( req, file, cb ) {
+          const filename = Date.now()+file.originalname;
+          req.image = filename;
+          cb( null, filename);
+      }
+  }
+);
+const upload = multer({ 
+  dest: 'uploads/',
+  storage:storage,
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype == "image/png" || file.mimetype == "image/jpg" || file.mimetype == "image/jpeg") {
+      cb(null, true);
+    } else {
+      cb(null, false);
+      return cb(new Error('Only .png, .jpg and .jpeg format allowed!'));
+    }
+  },
+  filename: function (req, file, cb) {
+    
+  }
+});
+
 app.get('/product',authenticate.auth,ProductController.index);
-app.post('/product',authenticate.auth,ProductValidation.stote,ProductController.store);
+app.post('/product',upload.single('image'),authenticate.auth,ProductValidation.stote,ProductController.store);
 app.get('/product/:id',authenticate.auth,ProductController.edit);
-app.put('/product/:id',authenticate.auth,ProductValidation.update,ProductController.update);
+app.put('/product/:id',upload.single('image'),authenticate.auth,ProductValidation.update,ProductController.update);
 app.delete('/product/:id',authenticate.auth,ProductController.delete);
 
 // admin all order

@@ -2,9 +2,7 @@ const db = require('../Models');
 const Product = db.ProductModel;
 const Category = db.CategoryModel;
 const Brand = db.BrandModel;
-
 const { validationResult } = require('express-validator');
-
 
 //get all Product
 exports.index = async (req, res)=>{
@@ -33,7 +31,7 @@ exports.brandproduct = async (req, res)=>{
             where:{BrandId:req.params.id}
         })
         .then(data => {
-        res.json(data).status(200);
+          res.json(data).status(200);
         })
         .catch(err => {
         res.status(500).send({
@@ -67,12 +65,17 @@ exports.categoryproduct = async (req, res)=>{
 //store Brand data
 exports.store = async (req, res)=>{
     const {name, brandId, categoryId, price, saleprice, description, short_description}  = req.body;
+    if(req.image!=undefined){
+        var image = req.image;
+    }else{
+        var image = '';
+    }
+    
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
-    
-    await Product.create({name, brandId, categoryId, price, saleprice, description, short_description})
+    await Product.create({name, brandId, categoryId, price, saleprice, image, description, short_description})
     .then(data => {
       res.json(data).status(200);
     })
@@ -113,11 +116,11 @@ exports.update = async (req, res)=>{
     .then(num => {
       if (num == 1) {
         res.json({
-          message: "Brand Updated"
+          message: "Product Updated"
         });
       } else {
         res.json({
-          message: "Brand Not Found"
+          message: "Product Not Found"
         });
       }
     })
@@ -137,11 +140,11 @@ exports.delete = async (req, res)=>{
     .then(num => {
       if (num == 1) {
         res.json({
-          message: "Brand Deleted"
+          message: "Product Deleted"
         });
       } else {
         res.json({
-          message: "Brand Not Found"
+          message: "Product Not Found"
         });
       }
     })
