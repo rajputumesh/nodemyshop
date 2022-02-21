@@ -3,7 +3,7 @@ module.exports = (sequelize, DataTypes) =>{
         name:DataTypes.STRING,
         role:{
             type:DataTypes.STRING,
-            allowNull:true,
+            allowNull:false,
             defaultValue:2
         },
         phone:{

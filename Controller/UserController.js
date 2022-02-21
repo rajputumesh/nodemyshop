@@ -1,34 +1,43 @@
 const db = require('../Models');
+const bcrypt = require('bcrypt');
 //const Op = db.Sequelize.Op;
 const Users = db.UserModel;
 const { validationResult } = require('express-validator');
 
 //get all Users
-exports.index = (req, res)=>{
-  var condition = { role: 2 };
-  Users.findAll({ where: condition })
-  .then(data => {
-    res.json(data).status(200);
-  })
-  .catch(err => {
-    res.status(500).send({
-      message:
-        err.message || "Opps: somthing wrong."
+exports.index = async (req, res)=>{
+  await Users.findAll({ 
+      attributes:['name','phone','email'],
+      where:{role:2}
+    })
+    .then(data => {
+      res.json(data).status(200);
+    })
+    .catch(err => {
+      res.status(500).send({
+        message:
+          err.message || "Opps: somthing wrong."
+      });
     });
-  });
 }
 
 //store user data
 exports.store = async (req, res)=>{
-    var params  = req.body;
-    console.log('params ',params);
+    const {name, phone, email, pass}  = req.body;
+    const password = await bcrypt.hash(pass, 10);
+    
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
-    let data = await Users.create(params)
+    
+    let data = await Users.create({name, phone, email, password})
     .then(data => {
-      res.json(data).status(200);
+      res.json({
+        name:data.name,
+        email:data.email,
+        phone:data.phone
+      }).status(200);
     })
     .catch(err => {
       res.status(500).send({
@@ -38,30 +47,39 @@ exports.store = async (req, res)=>{
 }
 
 //get single user
-exports.edit = (req, res)=>{
-  Users.findByPk(req.params.id)
-  .then(data => {
-    res.json(data).status(200);
-  })
-  .catch(err => {
-    res.status(500).send({
-      message:err.message
+exports.edit = async (req, res)=>{
+    await Users.findByPk(
+      {
+        attributes:['name','phone','email']
+      }
+      ,req.params.id
+    )
+    .then(data => {
+        res.json({
+          name:data.name,
+          email:data.email,
+          phone:data.phone
+        }).status(200);
+    })
+    .catch(err => {
+        res.status(500).send({
+        message:err.message
+        });
     });
-  });
 }
 
 //update user data
-exports.update = (req, res)=>{
+exports.update = async (req, res)=>{
 
     const id = req.params.id;
-    var params  = req.body;
-    console.log('params ',params);
+    const {name, phone, email}  = req.body;
+    
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.json(400).json({ errors: errors.array() });
     }
 
-    Users.update(params, {
+    await Users.update({name, phone, email}, {
       where: { id: id }
     })
     .then(num => {
@@ -83,9 +101,9 @@ exports.update = (req, res)=>{
 }
 
 //delete
-exports.delete = (req, res)=>{
+exports.delete = async (req, res)=>{
     const id = req.params.id;
-    Users.destroy({
+    await Users.destroy({
       where: { id: id }
     })
     .then(num => {
@@ -104,5 +122,9 @@ exports.delete = (req, res)=>{
         message: err.message
       });
     });
+}
+
+exports.logout = async (req, res)=>{
+   
 }
 

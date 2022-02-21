@@ -6,9 +6,9 @@ module.exports = (sequelize, DataTypes) =>{
             autoIncrement: true,
             autoIncrement: 1000
         },
-        userid:DataTypes.BIGINT,
+        userId:DataTypes.BIGINT,
         orderno:DataTypes.TEXT,
-        total:DataTypes.FLOAT,
+        totalAmount:DataTypes.FLOAT,
         qty:DataTypes.INTEGER,
         address:DataTypes.STRING,
         status:{
