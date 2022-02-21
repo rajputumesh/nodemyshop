@@ -42,7 +42,7 @@ exports.store = async (req, res)=>{
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
-    var {userId, totalAmount, qty, address, cartItem}  = req.body;
+    var {totalAmount, qty, address, cartItem}  = req.body;
     const userId = req.userData.id;
     if(cartItem.length > 0)
     {
@@ -128,11 +128,11 @@ exports.delete = async (req, res)=>{
             where: { orderId: id }
         })
         res.json({
-          message: "User Deleted"
+          message: "Order Deleted"
         });
       } else {
         res.json({
-          message: "User Not Found"
+          message: "Order Not Found"
         });
       }
     })

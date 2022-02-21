@@ -65,11 +65,11 @@ exports.update = async (req, res)=>{
     .then(num => {
       if (num == 1) {
         res.json({
-          message: "Brand Updated"
+          message: "Category Updated"
         });
       } else {
         res.json({
-          message: "Brand Not Found"
+          message: "Category Not Found"
         });
       }
     })
@@ -89,11 +89,11 @@ exports.delete = async (req, res)=>{
     .then(num => {
       if (num == 1) {
         res.json({
-          message: "Brand Deleted"
+          message: "Category Deleted"
         });
       } else {
         res.json({
-          message: "Brand Not Found"
+          message: "Category Not Found"
         });
       }
     })
