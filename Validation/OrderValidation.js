@@ -1,13 +1,16 @@
 const { check } = require('express-validator');
 exports.stote = [
-    check('name','Name is Requried').notEmpty(),
-    check('phone','Phone is Requried').notEmpty(),
-    check('email','Phone is Requried').notEmpty(),
-    check('password','Password must be in 6 charactors').isLength({min:6})
+    check('address','Address is Requried').notEmpty(),
+    check('userId','UserId is Requried').notEmpty(),
+    check('qty','Phone is Requried').notEmpty(),
+    check('totalAmount','Total Amount is Requried').notEmpty(),
+    check('cartItem','cart Items is Requried').notEmpty(),
 ]
 
 exports.update = [
-    check('name','Name is Requried').notEmpty(),
-    check('phone','Phone is Requried').notEmpty(),
-    check('email','Phone is Requried').notEmpty()
+    check('address','Address is Requried').notEmpty(),
+    check('userId','UserId is Requried').notEmpty(),
+    check('qty','Phone is Requried').notEmpty(),
+    check('totalAmount','Total Amount is Requried').notEmpty(),
+    check('cartItem','cart Items is Requried').notEmpty(),
 ]

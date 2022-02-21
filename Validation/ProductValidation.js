@@ -1,8 +1,8 @@
 const { check } = require('express-validator');
 exports.stote = [
     check('name','Name is Requried').notEmpty(),
-    check('brandid','Brand is Requried').notEmpty(),
-    check('categoryid','Category is Requried').notEmpty(),
+    check('brandId','Brand is Requried').notEmpty(),
+    check('categoryId','Category is Requried').notEmpty(),
     check('price','Price is Requried').notEmpty(),
     check('saleprice','Sale Price is Requried').notEmpty(),
     check('image','Image be in 6 charactors').notEmpty(),
@@ -12,8 +12,8 @@ exports.stote = [
 
 exports.update = [
     check('name','Name is Requried').notEmpty(),
-    check('brandid','Brand is Requried').notEmpty(),
-    check('categoryid','Category is Requried').notEmpty(),
+    check('brandId','Brand is Requried').notEmpty(),
+    check('categoryId','Category is Requried').notEmpty(),
     check('price','Price is Requried').notEmpty(),
     check('saleprice','Sale Price is Requried').notEmpty(),
     check('image','Image be in 6 charactors').notEmpty(),

@@ -1,8 +1,8 @@
 module.exports = (sequelize, DataTypes) =>{
     const ProductModel = sequelize.define("products",{
         name:DataTypes.STRING,
-        brandid:DataTypes.INTEGER,
-        categoryid:DataTypes.INTEGER,
+        brandId:DataTypes.INTEGER,
+        categoryId:DataTypes.INTEGER,
         price:DataTypes.FLOAT,
         saleprice:DataTypes.FLOAT,
         image:{
