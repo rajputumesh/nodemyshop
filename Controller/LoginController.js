@@ -53,12 +53,11 @@ exports.login = async (req, res)=>{
     }
     
     await Users.findAll({ where:{ email:email } })
-    .then(data => {
+    .then(async (data) => {
         if(data.length > 0){
-            bcrypt.compare(password, data[0].password,(err, result)=>{
-                if(err){
-                    res.status(201).json({ message:"Auth Field"})
-                }
+            await bcrypt.compare(password, data[0].password)
+            .then(function(result) {
+                console.log(result);
                 if(result){
                     var token = jwt.sign(
                     { 
@@ -73,6 +72,10 @@ exports.login = async (req, res)=>{
                     res.status(200).send({
                         message:"login success",
                         token:token
+                    });
+                }else{
+                    res.status(201).send({
+                        message:"Password not match"
                     });
                 }
             })
