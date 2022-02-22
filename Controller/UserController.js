@@ -7,7 +7,7 @@ const { validationResult } = require('express-validator');
 //get all Users
 exports.index = async (req, res)=>{
   await Users.findAll({ 
-      attributes:['name','phone','email'],
+      attributes:['id', 'name', 'phone', 'email'],
       where:{role:2}
     })
     .then(data => {
@@ -50,7 +50,7 @@ exports.store = async (req, res)=>{
 exports.edit = async (req, res)=>{
     await Users.findByPk(
       {
-        attributes:['name','phone','email']
+        attributes:['id', 'name', 'phone', 'email']
       }
       ,req.params.id
     )
