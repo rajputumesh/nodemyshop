@@ -44,18 +44,18 @@ const ProductValidation = require('./Validation/ProductValidation');
 
 
 //user routes
-app.get('/user',authenticate.auth,UserController.index);
-app.post('/user',authenticate.auth,UserValidation.store,UserController.store);
-app.get('/user/:id',authenticate.auth,UserController.edit);
-app.put('/user/:id',authenticate.auth,UserValidation.update,UserController.update);
-app.delete('/user/:id',authenticate.auth,UserController.delete);
+app.get('/user',authenticate.auth,authenticate.admin,UserController.index);
+app.post('/user',authenticate.auth,authenticate.admin,UserValidation.store,UserController.store);
+app.get('/user/:id',authenticate.auth,authenticate.admin,UserController.edit);
+app.put('/user/:id',authenticate.auth,authenticate.admin,UserValidation.update,UserController.update);
+app.delete('/user/:id',authenticate.auth,authenticate.admin,UserController.delete);
 
 //brands route
-app.get('/brand',authenticate.auth,BrandController.index);
-app.post('/brand',authenticate.auth,authenticate.admin,BrandValidation.stote,BrandController.store);
-app.get('/brand/:id',authenticate.auth,authenticate.admin,BrandController.edit);
-app.put('/brand/:id',authenticate.auth,authenticate.admin,BrandValidation.update,BrandController.update);
-app.delete('/brand/:id',authenticate.auth,authenticate.admin,BrandController.delete);
+app.get('/brand',authenticate.auth,authenticate.admin,BrandController.index);
+app.post('/brand',authenticate.auth,authenticate.admin,authenticate.admin,BrandValidation.stote,BrandController.store);
+app.get('/brand/:id',authenticate.auth,authenticate.admin,authenticate.admin,BrandController.edit);
+app.put('/brand/:id',authenticate.auth,authenticate.admin,authenticate.admin,BrandValidation.update,BrandController.update);
+app.delete('/brand/:id',authenticate.auth,authenticate.admin,authenticate.admin,BrandController.delete);
 
 //Category route
 app.get('/category',authenticate.auth,CategoryController.index);
@@ -87,11 +87,11 @@ const upload = multer({
   }
 });
 
-app.get('/product',authenticate.auth,ProductController.index);
-app.post('/product',authenticate.auth,upload.single('image'),ProductValidation.stote,ProductController.store);
-app.get('/product/:id',authenticate.auth,ProductController.edit);
-app.put('/product/:id',authenticate.auth,upload.single('image'),ProductValidation.update,ProductController.update);
-app.delete('/product/:id',authenticate.auth,ProductController.delete);
+app.get('/product',authenticate.auth,authenticate.admin,ProductController.index);
+app.post('/product',authenticate.auth,authenticate.admin,upload.single('image'),ProductValidation.stote,ProductController.store);
+app.get('/product/:id',authenticate.auth,authenticate.admin,ProductController.edit);
+app.put('/product/:id',authenticate.auth,authenticate.admin,upload.single('image'),ProductValidation.update,ProductController.update);
+app.delete('/product/:id',authenticate.auth,authenticate.admin,ProductController.delete);
 
 // admin all order
 app.get('/order',authenticate.auth,authenticate.admin,OrderController.index);
