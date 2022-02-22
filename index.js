@@ -2,13 +2,17 @@ const express = require('express');
 const app = express();
 const multer = require('multer');
 const db = require('./Models');
+let router = express.Router();
+//let backend = express.Router();
+
+db.sequelize.sync({force:false});
 
 const bodyParser = require('body-parser');
 app.use( bodyParser.json() );       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
   extended: true
 }));
-db.sequelize.sync({force:false});
+
 const port = process.env.PORT || 5000;
 app.set('view engine','ejs');
 app.get('/',(req, res)=>{
@@ -48,17 +52,17 @@ app.delete('/user/:id',authenticate.auth,UserController.delete);
 
 //brands route
 app.get('/brand',authenticate.auth,BrandController.index);
-app.post('/brand',authenticate.auth,BrandValidation.stote,BrandController.store);
-app.get('/brand/:id',authenticate.auth,BrandController.edit);
-app.put('/brand/:id',authenticate.auth,BrandValidation.update,BrandController.update);
-app.delete('/brand/:id',authenticate.auth,BrandController.delete);
+app.post('/brand',authenticate.auth,authenticate.admin,BrandValidation.stote,BrandController.store);
+app.get('/brand/:id',authenticate.auth,authenticate.admin,BrandController.edit);
+app.put('/brand/:id',authenticate.auth,authenticate.admin,BrandValidation.update,BrandController.update);
+app.delete('/brand/:id',authenticate.auth,authenticate.admin,BrandController.delete);
 
 //Category route
 app.get('/category',authenticate.auth,CategoryController.index);
-app.post('/category',authenticate.auth,CategoryValidation.stote,CategoryController.store);
-app.get('/category/:id',authenticate.auth,CategoryController.edit);
-app.put('/category/:id',authenticate.auth,CategoryValidation.update,CategoryController.update);
-app.delete('/category/:id',authenticate.auth,CategoryController.delete);
+app.post('/category',authenticate.auth,authenticate.admin,CategoryValidation.stote,CategoryController.store);
+app.get('/category/:id',authenticate.auth,authenticate.admin,CategoryController.edit);
+app.put('/category/:id',authenticate.auth,authenticate.admin,CategoryValidation.update,CategoryController.update);
+app.delete('/category/:id',authenticate.auth,authenticate.admin,CategoryController.delete);
 
 //Product route
 var storage = multer.diskStorage(
@@ -80,16 +84,13 @@ const upload = multer({
       cb(null, false);
       return cb(new Error('Only .png, .jpg and .jpeg format allowed!'));
     }
-  },
-  filename: function (req, file, cb) {
-    
   }
 });
 
 app.get('/product',authenticate.auth,ProductController.index);
-app.post('/product',upload.single('image'),authenticate.auth,ProductValidation.stote,ProductController.store);
+app.post('/product',authenticate.auth,upload.single('image'),ProductValidation.stote,ProductController.store);
 app.get('/product/:id',authenticate.auth,ProductController.edit);
-app.put('/product/:id',upload.single('image'),authenticate.auth,ProductValidation.update,ProductController.update);
+app.put('/product/:id',authenticate.auth,upload.single('image'),ProductValidation.update,ProductController.update);
 app.delete('/product/:id',authenticate.auth,ProductController.delete);
 
 // admin all order
@@ -98,21 +99,26 @@ app.get('/order',authenticate.auth,authenticate.admin,OrderController.index);
 //api auth route
 
 //Auth route
-app.post('/login',UserValidation.auth,LoginController.login);
-app.post('/register',UserValidation.store,LoginController.register);
-app.post('/logout',authenticate.auth,UserController.logout);
+router.post('/login',UserValidation.auth,LoginController.login);
+router.post('/register',UserValidation.store,LoginController.register);
+router.post('/logout',authenticate.auth,UserController.logout);
+
+//category - brands
+router.get('/brand',BrandController.index);
+router.get('/category',CategoryController.index);
 
 //product
-app.get('/api/product',ProductController.index);
-app.get('/api/product/:id',ProductController.edit);
-app.get('/api/brand/:id/product',ProductController.brandproduct);
-app.get('/api/category/:id/product',ProductController.categoryproduct);
+router.get('/product',ProductController.index);
+router.get('/product/:id',ProductController.edit);
+router.get('/brand/:id/product',ProductController.brandproduct);
+router.get('/category/:id/product',ProductController.categoryproduct);
 
 //orders route
-app.get('/api/order',authenticate.auth,OrderController.userorder);
-app.post('/api/order',authenticate.auth,OrderValidation.stote,OrderController.store);
-app.get('/api/order/:id',authenticate.auth,OrderController.edit);
-app.put('/api/order/:id',authenticate.auth,OrderValidation.update,OrderController.update);
-app.delete('/api/order/:id',authenticate.auth,OrderController.delete);
+router.get('/order',authenticate.auth,OrderController.userorder);
+router.post('/order',authenticate.auth,OrderValidation.stote,OrderController.store);
+router.get('/order/:id',authenticate.auth,OrderController.edit);
+router.put('/order/:id',authenticate.auth,OrderValidation.update,OrderController.update);
+router.delete('/order/:id',authenticate.auth,OrderController.delete);
+app.use('/api',router);
 
 app.listen(port);
